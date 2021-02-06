@@ -1,0 +1,66 @@
+/* Private Functions and Variables */
+double cthresh=INT_MAX;
+bool customRegionGrowing(const PointType& point_a, const PointType& point_b, float squared_distance)
+{
+  if (squared_distance < cthresh)
+    return true;
+  else
+    return false;
+}
+
+void Pipline::RegionGrowth(int level,double thresh_kIQR)
+{  
+    pcl::IndicesClustersPtr clusters (new pcl::IndicesClusters);
+    pcl::IndicesClustersPtr small_clusters (new pcl::IndicesClusters);
+    pcl::IndicesClustersPtr large_clusters (new pcl::IndicesClusters);
+    pcl::search::KdTree<PointType>::Ptr kdtree_tmp(new pcl::search::KdTree<PointType>);
+    double cellsize=GetCellSize(cloud_,level);
+
+    // Set up a Conditional Euclidean Clustering class
+    pcl::ConditionalEuclideanClustering<PointType> cec(true);
+    cec.setInputCloud (cloud_);
+    cec.setConditionFunction (&customRegionGrowing);
+    cec.setClusterTolerance (cellsize);
+    cec.segment(*clusters);
+
+    vector<int> cluster_size_set;
+    for(int i=0;i<clusters->size();i++){
+       cluster_size_set.push_back((*clusters)[i].indices.size());
+    }
+    for(int i=0;i<clusters->size();i++){
+        int rtmp=rand()%255;
+        int gtmp=rand()%255;
+        int btmp=rand()%255;
+        for(int j=0;j<(*clusters)[i].indices.size();j++){            
+            cloud_->points[(*clusters)[i].indices[j]].r=rtmp;
+            cloud_->points[(*clusters)[i].indices[j]].g=gtmp;
+            cloud_->points[(*clusters)[i].indices[j]].b=btmp;
+        }
+    }
+    pcl::io::savePLYFileBinary("/home/llg/dataset_paper/out_of_core_version.ply",*cloud_);
+
+    // double IQR=Quantile(cluster_size_set,0.75)-Quantile(cluster_size_set,0.25);
+    // double thresh=Quantile(cluster_size_set,0.75)+IQR*thresh_kIQR;
+    // cout<<"quantity of cluster:"<<cluster_size_set.size()<<endl;
+    // cout<<"cluster thresh:"<<thresh<<endl;
+    // for(int i=0;i<clusters->size();i++){
+    //     int current_cluster_size=(*clusters)[i].indices.size();
+    //     if(current_cluster_size<=thresh){            
+    //         for(int j=0;j<(*clusters)[i].indices.size();j++){
+    //             int itmp=GetIndex(kdtree_,cloud_->points[(*clusters)[i].indices[j]]);
+    //             status_[itmp]=-accumulator_;
+    //             rst1->points.push_back(cloud_->points[itmp]);
+    //         }
+    //     }
+    //     else{
+    //         for(int j=0;j<(*clusters)[i].indices.size();j++){
+    //             int itmp=GetIndex(kdtree_,cloud_->points[(*clusters)[i].indices[j]]);
+    //             status_[itmp]=accumulator_;
+    //             rst0->points.push_back(cloud_->points[itmp]);
+    //         }
+    //     }     
+    // }
+    // pcl::io::savePLYFileBinary("Result/rst_"+to_string(accumulator_)+"_regular.ply",*rst0);
+    // pcl::io::savePLYFileBinary("Result/rst_"+to_string(accumulator_)+"_irregular.ply",*rst1);
+    // cout<<"RegionGrowth end!"<<endl;    
+}

@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/mproc",
+            // "args": ["/home/llg/dataset_upholstery/0_raw/huizhongli.ply"],
+            // "args": ["test_sampling",
+            //          "/home/llg/dataset_upholstery/0_raw/luming.ply",
+            //          "100000000",
+            //          "/home/llg/dataset_paper/Experiment/Exp41/luming_10^8.ply"],
+            // "args": ["00_downsampling",
+            //     "/home/llg/dataset_paper/Experiment/Exp41/luming_10^3.ply",
+            //     "0.5"],
+            "args": ["01_OR1",
+                "/home/llg/dataset_paper/Experiment/Exp41/luming_10^7.ply",
+                "/home/llg/dataset_paper/Experiment/Exp41/luming_10^7_or1.ply"],
+            // "args": ["print_header",
+            //     "/home/llg/dataset_paper/Experiment/Exp41/luming_10^8.ply"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
